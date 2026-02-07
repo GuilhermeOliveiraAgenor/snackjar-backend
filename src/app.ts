@@ -1,5 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import { recipeStepRoutes } from "./http/routes/recipe-step-routes";
 import { errorHandler } from "./http/middleware/error-handler";
 import { categoryRoutes } from "./http/routes/category-routes";
@@ -11,6 +12,14 @@ import { userRoutes } from "./http/routes/user-routes";
 export const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    credentials: true, //cookie
+  }),
+);
 
 app.use(categoryRoutes);
 app.use(userRoutes);
@@ -20,4 +29,3 @@ app.use(recipeRoutes);
 app.use(recipeStepRoutes);
 
 app.use(errorHandler);
-app.use(cookieParser());
