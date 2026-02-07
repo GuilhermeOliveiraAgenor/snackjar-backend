@@ -18,4 +18,5 @@ userRoutes.get("/me", makeAuthMiddleware(), (req, res, next) => {
   return makeGetMeController().handle(req, res, next);
 });
 
+
 export { userRoutes };
