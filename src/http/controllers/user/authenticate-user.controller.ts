@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AuthenticateUserUseCase } from "../../../application/use-cases/user/authenticate-user";
 import { JwtService } from "../../../infra/auth/JwtService";
 import { z } from "zod";
+import { authCookieConfig } from "../../cookies/cookie-config";
 
 const authenticateSchema = z.object({
   email: z.string().min(10),
@@ -28,7 +29,10 @@ export class AuthenticateUserController {
 
       const token = this.jwtService.sign(userId);
 
-      return res.status(200).json({ userId, token });
+      // pass token to cookie
+      res.cookie("access_token", token, authCookieConfig);
+
+      return res.status(200).json({ userId });
     } catch (error) {
       next(error);
     }

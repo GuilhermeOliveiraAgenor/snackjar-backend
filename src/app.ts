@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import { recipeStepRoutes } from "./http/routes/recipe-step-routes";
 import { errorHandler } from "./http/middleware/error-handler";
 import { categoryRoutes } from "./http/routes/category-routes";
@@ -19,3 +20,4 @@ app.use(recipeRoutes);
 app.use(recipeStepRoutes);
 
 app.use(errorHandler);
+app.use(cookieParser());
