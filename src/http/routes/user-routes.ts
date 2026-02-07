@@ -3,6 +3,7 @@ import { makeAuthMiddleware } from "../factories/make-auth-middleware";
 import { makeAuthenticateUserController } from "../factories/make-authenticate.controller";
 import { makeCreateUserController } from "../factories/make-create-user.controller";
 import { makeGetMeController } from "../factories/make-get-me.controller";
+import { MakeLogoutController } from "../factories/make-logout.controller";
 
 const userRoutes = Router();
 
@@ -18,5 +19,8 @@ userRoutes.get("/me", makeAuthMiddleware(), (req, res, next) => {
   return makeGetMeController().handle(req, res, next);
 });
 
+userRoutes.post("/logout", (req, res) => {
+  return MakeLogoutController().handle(req, res);
+});
 
 export { userRoutes };
