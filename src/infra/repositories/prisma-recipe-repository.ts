@@ -22,10 +22,19 @@ export class PrismaRecipeRepository implements RecipeRepository {
     userId: string,
     page: number,
     perPage: number,
+    search: string,
   ): Promise<{ recipes: Recipe[]; totalCount: number }> {
     const skip = (page - 1) * perPage;
 
-    const where = { createdBy: userId, status: RecipeStatus.ACTIVE, deletedAt: null };
+    const where = {
+      createdBy: userId,
+      status: RecipeStatus.ACTIVE,
+      deletedAt: null,
+
+      ...(search && {
+        title: { contains: search, mode: QueryMode.insensitive },
+      }),
+    };
 
     const [totalCount, recipes] = await Promise.all([
       this.prisma.recipe.count({ where }),
