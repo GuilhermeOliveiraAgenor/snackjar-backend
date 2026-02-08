@@ -9,7 +9,7 @@ interface FetchMyRecipesUseCaseRequest {
   userId: string;
   page?: number;
   perPage?: number;
-  search?: string;
+  title?: string;
 }
 
 type FetchMyRecipesUseCaseResponse = Either<
@@ -28,7 +28,7 @@ export class FetchMyRecipesUseCase {
 
   async execute({
     userId,
-    search,
+    title,
     page = 1,
     perPage = 10,
   }: FetchMyRecipesUseCaseRequest): Promise<FetchMyRecipesUseCaseResponse> {
@@ -42,7 +42,7 @@ export class FetchMyRecipesUseCase {
       user.id.toString(),
       page,
       perPage,
-      search,
+      title,
     );
 
     const meta: PaginationMeta = {

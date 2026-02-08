@@ -33,24 +33,6 @@ export class InMemoryRecipeRepository implements RecipeRepository {
     }
     return recipe;
   }
-  async findManyByUserIdAndTitle(
-    userId: string,
-    title: string,
-    page: number,
-    perPage: number,
-  ): Promise<{ recipes: Recipe[]; totalCount: number }> {
-    const userRecipes = this.items.filter(
-      (item) => item.createdBy.toString() === userId && item.title === title,
-    );
-    const totalCount = this.items.length;
-
-    const recipes = userRecipes.slice((page - 1) * perPage, page * perPage);
-
-    return {
-      recipes,
-      totalCount,
-    };
-  }
   async findByUserIdAndTitle(userId: string, title: string): Promise<Recipe | null> {
     const recipe = this.items.find(
       (item) => item.title === title && item.createdBy.toString() == userId.toString(),

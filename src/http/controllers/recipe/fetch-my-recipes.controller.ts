@@ -5,7 +5,7 @@ import z from "zod";
 
 const fetchMyRecipeSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  search: z
+  title: z
     .string()
     .optional()
     .transform((v) => v?.trim() || undefined),
@@ -18,12 +18,12 @@ export class FetchMyRecipesController {
     try {
       const userId = req.user.id;
 
-      const { page, search } = fetchMyRecipeSchema.parse(req.query);
+      const { page, title } = fetchMyRecipeSchema.parse(req.query);
 
       const result = await this.fetchMyRecipesUseCase.execute({
         userId,
         page,
-        ...(search && { search }),
+        ...(title && { title }),
       });
 
       if (result.isError()) {
