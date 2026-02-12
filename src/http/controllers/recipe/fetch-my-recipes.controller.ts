@@ -9,6 +9,7 @@ const fetchMyRecipeSchema = z.object({
     .string()
     .optional()
     .transform((v) => v?.trim() || undefined),
+  categoryId: z.string().optional(),
 });
 
 export class FetchMyRecipesController {
@@ -18,12 +19,13 @@ export class FetchMyRecipesController {
     try {
       const userId = req.user.id;
 
-      const { page, title } = fetchMyRecipeSchema.parse(req.query);
+      const { page, title, categoryId } = fetchMyRecipeSchema.parse(req.query);
 
       const result = await this.fetchMyRecipesUseCase.execute({
         userId,
         page,
         ...(title && { title }),
+        ...(categoryId && { categoryId }),
       });
 
       if (result.isError()) {
@@ -34,7 +36,6 @@ export class FetchMyRecipesController {
         .status(200)
         .json(RecipePresenter.toHTTPPaginated(result.value.recipes, result.value.meta));
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }

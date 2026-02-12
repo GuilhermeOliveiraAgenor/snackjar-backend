@@ -10,6 +10,7 @@ interface FetchMyRecipesUseCaseRequest {
   page?: number;
   perPage?: number;
   title?: string;
+  categoryId?: string;
 }
 
 type FetchMyRecipesUseCaseResponse = Either<
@@ -31,6 +32,7 @@ export class FetchMyRecipesUseCase {
     title,
     page = 1,
     perPage = 10,
+    categoryId,
   }: FetchMyRecipesUseCaseRequest): Promise<FetchMyRecipesUseCaseResponse> {
     // verify if user exists
     const user = await this.userRepository.findById(userId);
@@ -43,6 +45,7 @@ export class FetchMyRecipesUseCase {
       page,
       perPage,
       title,
+      categoryId,
     );
 
     const meta: PaginationMeta = {

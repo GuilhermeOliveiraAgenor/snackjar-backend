@@ -23,6 +23,7 @@ export class PrismaRecipeRepository implements RecipeRepository {
     page: number,
     perPage: number,
     title: string,
+    categoryId: string,
   ): Promise<{ recipes: Recipe[]; totalCount: number }> {
     const skip = (page - 1) * perPage;
 
@@ -33,6 +34,10 @@ export class PrismaRecipeRepository implements RecipeRepository {
 
       ...(title && {
         title: { contains: title, mode: QueryMode.insensitive },
+      }),
+
+      ...(categoryId && {
+        categoryId,
       }),
     };
 
