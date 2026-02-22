@@ -3,7 +3,7 @@ import { BasePresenter } from "./base/base-presenter";
 import { PaginationMeta } from "./base/pagination-meta";
 
 export class RecipePresenter {
-  private static map(raw: Recipe) {
+  static map(raw: Recipe) {
     return {
       id: raw.id.toString(),
       title: raw.title,

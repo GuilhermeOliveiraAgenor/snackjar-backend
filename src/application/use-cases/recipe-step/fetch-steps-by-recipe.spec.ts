@@ -9,6 +9,7 @@ import { InMemoryRecipeRepository } from "../../../../test/repositories/in-memor
 import { makeRecipe } from "../../../../test/factories/make-recipe";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { RecipeStatus } from "../../../core/enum/recipe-status";
+import { InactiveError } from "../../errors/inactive-error";
 
 let inMemoryRecipeStepRepository: InMemoryRecipeStepRepository;
 let inMemoryUserRepository: InMemoryUserRepository;
@@ -103,6 +104,6 @@ describe("Fetch My Recipe Steps By Recipe Id Use Case", () => {
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotAllowedError);
+    expect(result.value).toBeInstanceOf(InactiveError);
   });
 });

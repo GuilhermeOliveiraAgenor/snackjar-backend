@@ -26,13 +26,14 @@ export class AuthenticateUserController {
       }
 
       const userId = result.value.userId.toString();
+      const provider = result.value.provider.toString();
 
-      const token = this.jwtService.sign(userId);
+      const token = this.jwtService.sign(userId, provider);
 
       // pass token to cookie
       res.cookie("access_token", token, authCookieConfig);
 
-      return res.status(200).json({ userId });
+      return res.status(200).json({ userId, provider });
     } catch (error) {
       next(error);
     }

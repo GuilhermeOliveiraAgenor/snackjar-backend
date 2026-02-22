@@ -22,10 +22,24 @@ export class PrismaRecipeRepository implements RecipeRepository {
     userId: string,
     page: number,
     perPage: number,
+    title: string,
+    categoryId: string,
   ): Promise<{ recipes: Recipe[]; totalCount: number }> {
     const skip = (page - 1) * perPage;
 
-    const where = { createdBy: userId, status: RecipeStatus.ACTIVE, deletedAt: null };
+    const where = {
+      createdBy: userId,
+      status: RecipeStatus.ACTIVE,
+      deletedAt: null,
+
+      ...(title && {
+        title: { contains: title, mode: QueryMode.insensitive },
+      }),
+
+      ...(categoryId && {
+        categoryId,
+      }),
+    };
 
     const [totalCount, recipes] = await Promise.all([
       this.prisma.recipe.count({ where }),
@@ -49,38 +63,7 @@ export class PrismaRecipeRepository implements RecipeRepository {
     if (!recipe) return null;
     return PrismaRecipeMapper.toDomain(recipe);
   }
-  async findManyByUserIdAndTitle(
-    userId: string,
-    title: string,
-    page: number,
-    perPage: number,
-  ): Promise<{ recipes: Recipe[]; totalCount: number }> {
-    const skip = (page - 1) * perPage;
 
-    const where = {
-      createdBy: userId,
-      title: {
-        contains: title,
-        mode: QueryMode.insensitive,
-      },
-      status: RecipeStatus.ACTIVE,
-      deletedAt: null,
-    };
-
-    const [totalCount, recipes] = await Promise.all([
-      this.prisma.recipe.count({ where }),
-      this.prisma.recipe.findMany({
-        where,
-        skip,
-        take: perPage,
-      }),
-    ]);
-
-    return {
-      recipes: recipes.map((raw) => PrismaRecipeMapper.toDomain(raw)),
-      totalCount,
-    };
-  }
   async findByUserIdAndTitle(userId: string, title: string): Promise<Recipe | null> {
     const recipe = await this.prisma.recipe.findFirst({
       where: {

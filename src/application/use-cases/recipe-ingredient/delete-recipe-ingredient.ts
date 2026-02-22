@@ -1,4 +1,6 @@
 import { Either, failure, success } from "../../../core/either";
+import { RecipeStatus } from "../../../core/enum/recipe-status";
+import { InactiveError } from "../../errors/inactive-error";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { NotFoundError } from "../../errors/resource-not-found-error";
 import { RecipeIngredientRepository } from "../../repositories/recipe-ingredient-repository";
@@ -9,7 +11,10 @@ interface DeleteRecipeIngredientUseCaseRequest {
   userId: string;
 }
 
-type DeleteRecipeIngredientUseCaseResponse = Either<NotFoundError | NotAllowedError, null>;
+type DeleteRecipeIngredientUseCaseResponse = Either<
+  NotFoundError | NotAllowedError | InactiveError,
+  null
+>;
 
 export class DeleteRecipeIngredientUseCase {
   constructor(
@@ -23,21 +28,21 @@ export class DeleteRecipeIngredientUseCase {
     // verify if recipe ingredient id exists
     const recipeIngredient = await this.recipeIngredientRepository.findById(id);
     if (!recipeIngredient) {
-      return failure(new NotFoundError("recipeIngredient"));
+      return failure(new NotFoundError("Ingredient"));
     }
 
     if (recipeIngredient.createdBy.toString() != userId) {
-      return failure(new NotAllowedError("user"));
+      return failure(new NotAllowedError("User"));
     }
 
     const recipe = await this.recipeRepository.findById(recipeIngredient.recipeId.toString());
 
     if (!recipe) {
-      return failure(new NotFoundError("recipe"));
+      return failure(new NotFoundError("Recipe"));
     }
 
-    if (recipe.status.toString() !== "ACTIVE") {
-      return failure(new NotAllowedError("recipe"));
+    if (recipe.status.toString() !== RecipeStatus.ACTIVE) {
+      return failure(new InactiveError("Recipe"));
     }
 
     await this.recipeIngredientRepository.delete(recipeIngredient);

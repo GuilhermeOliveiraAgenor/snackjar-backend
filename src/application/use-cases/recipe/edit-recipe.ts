@@ -3,6 +3,7 @@ import { Either, failure, success } from "../../../core/either";
 import { Recipe } from "../../../core/entities/recipe";
 import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
+import { InactiveError } from "../../errors/inactive-error";
 import { InvalidFieldsError } from "../../errors/invalid-fields-error";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { NotFoundError } from "../../errors/resource-not-found-error";
@@ -17,7 +18,7 @@ interface EditRecipeUseCaseRequest {
 }
 
 type EditRecipeUseCaseResponse = Either<
-  NotFoundError | NotAllowedError | AlreadyExistsError | InvalidFieldsError,
+  NotFoundError | NotAllowedError | InactiveError | AlreadyExistsError | InvalidFieldsError,
   {
     recipe: Recipe;
   }
@@ -35,27 +36,27 @@ export class EditRecipeUseCase {
     // verify if exists recipe
     const recipe = await this.recipeRepository.findById(id);
     if (!recipe) {
-      return failure(new NotFoundError("recipe"));
+      return failure(new NotFoundError("Recipe"));
     }
 
     if (recipe.status !== RecipeStatus.ACTIVE) {
-      return failure(new NotAllowedError("recipe"));
+      return failure(new InactiveError("Recipe"));
     }
 
     if (recipe.createdBy.toString() != userId) {
-      return failure(new NotAllowedError("user"));
+      return failure(new NotAllowedError("User"));
     }
 
     if (title !== undefined) {
       const alreadyExists = await this.recipeRepository.findByUserIdAndTitle(userId, title);
 
       if (alreadyExists && alreadyExists.id.toString() != id) {
-        return failure(new AlreadyExistsError("recipe"));
+        return failure(new AlreadyExistsError("Recipe"));
       }
     }
 
     if (preparationTime !== undefined && preparationTime <= 0) {
-      return failure(new InvalidFieldsError("recipe"));
+      return failure(new InvalidFieldsError("PreparationTime"));
     }
 
     recipe.title = title ?? recipe.title;

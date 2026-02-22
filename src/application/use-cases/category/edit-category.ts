@@ -29,13 +29,13 @@ export class EditCategoryUseCase {
 
     // verify if exists category
     if (!category) {
-      return failure(new NotFoundError("category"));
+      return failure(new NotFoundError("Category"));
     }
 
     if (name !== undefined) {
       const categoryName = await this.categoryRepository.findByName(name);
       if (categoryName && categoryName.id.toString() !== id) {
-        return failure(new AlreadyExistsError("category"));
+        return failure(new AlreadyExistsError("Category"));
       }
     }
 

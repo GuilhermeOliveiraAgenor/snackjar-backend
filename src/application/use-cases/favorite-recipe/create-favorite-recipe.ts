@@ -1,7 +1,9 @@
 import { UniqueEntityID } from "../../../core/domain/value-objects/unique-entity-id";
 import { Either, failure, success } from "../../../core/either";
 import { FavoriteRecipe } from "../../../core/entities/favoriteRecipe";
+import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
+import { InactiveError } from "../../errors/inactive-error";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { NotFoundError } from "../../errors/resource-not-found-error";
 import { FavoriteRecipeRepository } from "../../repositories/favorite-recipe-repository";
@@ -13,7 +15,7 @@ interface CreateFavoriteRecipeUseCaseRequest {
 }
 
 type CreateFavoriteRecipeUseCaseResponse = Either<
-  AlreadyExistsError | NotFoundError,
+  AlreadyExistsError | NotFoundError | InactiveError | NotAllowedError,
   {
     favoriteRecipe: FavoriteRecipe;
   }
@@ -31,15 +33,15 @@ export class CreateFavoriteRecipeUseCase {
     // verify if recipe id exists
     const recipe = await this.recipeRepository.findById(recipeId);
     if (!recipe) {
-      return failure(new NotFoundError("recipe"));
+      return failure(new NotFoundError("Recipe"));
     }
 
     if (recipe.createdBy.toString() != userId) {
-      return failure(new NotAllowedError("user"));
+      return failure(new NotAllowedError("User"));
     }
 
-    if (recipe.status !== "ACTIVE") {
-      return failure(new NotAllowedError("recipe"));
+    if (recipe.status !== RecipeStatus.ACTIVE) {
+      return failure(new InactiveError("Recipe"));
     }
 
     // verify if favorite recipe already exists
@@ -48,7 +50,7 @@ export class CreateFavoriteRecipeUseCase {
       recipeId,
     );
     if (alreadyExists) {
-      return failure(new AlreadyExistsError("favoriteRecipe"));
+      return failure(new AlreadyExistsError("Favorite"));
     }
 
     const favoriteRecipe = FavoriteRecipe.create({

@@ -1,7 +1,9 @@
 import { UniqueEntityID } from "../../../core/domain/value-objects/unique-entity-id";
 import { Either, failure, success } from "../../../core/either";
 import { RecipeStep } from "../../../core/entities/recipeStep";
+import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
+import { InactiveError } from "../../errors/inactive-error";
 import { InvalidFieldsError } from "../../errors/invalid-fields-error";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { NotFoundError } from "../../errors/resource-not-found-error";
@@ -16,7 +18,7 @@ interface CreateRecipeStepUseCaseRequest {
 }
 
 type CreateRecipeStepUseCaseResponse = Either<
-  NotFoundError | NotAllowedError | AlreadyExistsError | InvalidFieldsError,
+  NotFoundError | NotAllowedError | AlreadyExistsError | InvalidFieldsError | InactiveError,
   {
     recipeStep: RecipeStep;
   }
@@ -37,15 +39,15 @@ export class CreateRecipeStepUseCase {
     // verify if recipeId exits
     const recipe = await this.recipeRepository.findById(recipeId);
     if (!recipe) {
-      return failure(new NotFoundError("recipe"));
+      return failure(new NotFoundError("Recipe"));
     }
 
     if (recipe.createdBy.toString() !== userId) {
-      return failure(new NotAllowedError("user"));
+      return failure(new NotAllowedError("User"));
     }
 
-    if (recipe.status !== "ACTIVE") {
-      return failure(new NotAllowedError("recipe"));
+    if (recipe.status !== RecipeStatus.ACTIVE) {
+      return failure(new InactiveError("Recipe"));
     }
 
     const stepDuplicated = await this.recipeStepRepository.findByRecipeIdAndStep(
@@ -53,11 +55,11 @@ export class CreateRecipeStepUseCase {
       step,
     );
     if (stepDuplicated) {
-      return failure(new AlreadyExistsError("recipeStep"));
+      return failure(new AlreadyExistsError("Step"));
     }
 
     if (step <= 0) {
-      return failure(new InvalidFieldsError("recipeStep"));
+      return failure(new InvalidFieldsError("Step"));
     }
 
     const recipeStep = RecipeStep.create({

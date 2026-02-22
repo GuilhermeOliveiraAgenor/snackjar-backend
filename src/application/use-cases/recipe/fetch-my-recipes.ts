@@ -9,6 +9,8 @@ interface FetchMyRecipesUseCaseRequest {
   userId: string;
   page?: number;
   perPage?: number;
+  title?: string;
+  categoryId?: string;
 }
 
 type FetchMyRecipesUseCaseResponse = Either<
@@ -27,16 +29,24 @@ export class FetchMyRecipesUseCase {
 
   async execute({
     userId,
+    title,
     page = 1,
     perPage = 10,
+    categoryId,
   }: FetchMyRecipesUseCaseRequest): Promise<FetchMyRecipesUseCaseResponse> {
     // verify if user exists
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      return failure(new NotFoundError("user"));
+      return failure(new NotFoundError("User"));
     }
 
-    const result = await this.recipeRepository.findManyByUserId(user.id.toString(), page, perPage);
+    const result = await this.recipeRepository.findManyByUserId(
+      user.id.toString(),
+      page,
+      perPage,
+      title,
+      categoryId,
+    );
 
     const meta: PaginationMeta = {
       page,

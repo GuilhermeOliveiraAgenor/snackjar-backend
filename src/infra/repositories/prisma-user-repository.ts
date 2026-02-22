@@ -5,6 +5,7 @@ import { PrismaUserMapper } from "../mappers/prisma-user-mapper";
 
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly prisma: PrismaClient) {}
+
   async create(user: User): Promise<void> {
     await this.prisma.user.create({
       data: PrismaUserMapper.toPersistency(user),
@@ -22,6 +23,15 @@ export class PrismaUserRepository implements UserRepository {
       where: { email },
     });
     if (!user) return null;
+    return PrismaUserMapper.toDomain(user);
+  }
+  async findByGoogleId(googleId: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { googleId },
+    });
+
+    if (!user) return null;
+
     return PrismaUserMapper.toDomain(user);
   }
 }

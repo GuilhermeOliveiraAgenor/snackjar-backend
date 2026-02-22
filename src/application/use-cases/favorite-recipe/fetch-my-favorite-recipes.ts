@@ -1,6 +1,6 @@
 import { Either, success } from "../../../core/either";
-import { FavoriteRecipe } from "../../../core/entities/favoriteRecipe";
 import { PaginationMeta } from "../../../http/presenters/base/pagination-meta";
+import { FavoriteRecipeWithRecipe } from "../../../infra/mappers/prisma-favorite-recipe-mapper";
 import { NotFoundError } from "../../errors/resource-not-found-error";
 import { FavoriteRecipeRepository } from "../../repositories/favorite-recipe-repository";
 
@@ -13,7 +13,7 @@ interface FetchMyFavoriteRecipesRequest {
 type FetchMyFavoriteRecipesResponse = Either<
   NotFoundError,
   {
-    favoriteRecipes: FavoriteRecipe[];
+    favoriteRecipes: FavoriteRecipeWithRecipe[];
     meta: PaginationMeta;
   }
 >;

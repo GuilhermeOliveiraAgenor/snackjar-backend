@@ -1,7 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { FavoriteRecipeRepository } from "../../application/repositories/favorite-recipe-repository";
 import { FavoriteRecipe } from "../../core/entities/favoriteRecipe";
-import { PrismaFavoriteRecipeMapper } from "../mappers/prisma-favorite-recipe-mapper";
+import {
+  FavoriteRecipeWithRecipe,
+  PrismaFavoriteRecipeMapper,
+} from "../mappers/prisma-favorite-recipe-mapper";
 import { RecipeStatus } from "../../core/enum/recipe-status";
 
 export class PrismaFavoriteRecipeRepository implements FavoriteRecipeRepository {
@@ -22,7 +25,7 @@ export class PrismaFavoriteRecipeRepository implements FavoriteRecipeRepository 
     userId: string,
     page: number,
     perPage: number,
-  ): Promise<{ favoritesRecipes: FavoriteRecipe[]; totalCount: number }> {
+  ): Promise<{ favoritesRecipes: FavoriteRecipeWithRecipe[]; totalCount: number }> {
     const skip = (page - 1) * perPage;
 
     const where = {
@@ -37,12 +40,15 @@ export class PrismaFavoriteRecipeRepository implements FavoriteRecipeRepository 
       this.prisma.favoriteRecipe.count({ where }),
       this.prisma.favoriteRecipe.findMany({
         where,
+        include: { recipe: true },
         skip,
         take: perPage,
       }),
     ]);
     return {
-      favoritesRecipes: favoriteRecipes.map((raw) => PrismaFavoriteRecipeMapper.toDomain(raw)),
+      favoritesRecipes: favoriteRecipes.map((raw) =>
+        PrismaFavoriteRecipeMapper.toDomainWithRecipe(raw),
+      ),
       totalCount,
     };
   }

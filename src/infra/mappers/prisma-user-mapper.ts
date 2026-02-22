@@ -1,6 +1,7 @@
 import { UniqueEntityID } from "../../core/domain/value-objects/unique-entity-id";
 import { User } from "../../core/entities/user";
 import { Prisma, User as PrismaUser } from "@prisma/client";
+import { AuthProvider } from "../../core/enum/AuthProvider";
 
 export class PrismaUserMapper {
   static toDomain(raw: PrismaUser): User {
@@ -9,20 +10,24 @@ export class PrismaUserMapper {
         name: raw.name,
         email: raw.email,
         password: raw.password,
+        googleId: raw.googleId,
+        provider: raw.provider as AuthProvider,
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },
       new UniqueEntityID(raw.id),
     );
   }
-  static toPersistency(user: User): Prisma.UserUncheckedCreateInput {
+  static toPersistency(raw: User): Prisma.UserUncheckedCreateInput {
     return {
-      id: user.id.toString(),
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      id: raw.id.toString(),
+      name: raw.name,
+      email: raw.email,
+      password: raw.password ? raw.password.toString() : null,
+      googleId: raw.googleId ? raw.googleId.toString() : null,
+      provider: raw.provider,
+      createdAt: raw.createdAt,
+      updatedAt: raw.updatedAt,
     };
   }
 }

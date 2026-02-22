@@ -10,6 +10,7 @@ import { makeFavoriteRecipe } from "../../../../test/factories/make-favorite-rec
 import { AlreadyExistsError } from "../../errors/already-exists-error";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { RecipeStatus } from "../../../core/enum/recipe-status";
+import { InactiveError } from "../../errors/inactive-error";
 
 let inMemoryRecipeRepository: InMemoryRecipeRepository;
 let inMemoryFavoriteRecipeRepository: InMemoryFavoriteRecipeRepository;
@@ -104,6 +105,7 @@ describe("Create Favorite Recipe Use Case", () => {
 
     const recipe = makeRecipe({
       status: RecipeStatus.INACTIVE,
+      createdBy: user.id,
     });
     await inMemoryRecipeRepository.create(recipe);
 
@@ -113,6 +115,6 @@ describe("Create Favorite Recipe Use Case", () => {
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotAllowedError);
+    expect(result.value).toBeInstanceOf(InactiveError);
   });
 });

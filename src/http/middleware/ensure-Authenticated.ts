@@ -11,12 +11,13 @@ export function ensureAuthenticated(jwtService: IJWTService) {
     }
 
     try {
-      const sub = jwtService.verify(token);
-      // set user id
+      const payload = jwtService.verify(token);
+      // set payload
       req.user = {
-        id: sub,
+        id: payload.sub,
+        provider: payload.provider,
       };
-      next();
+      return next();
     } catch (error) {
       return res.status(401).json({ message: `Token is not in the correct format ${error}` });
     }

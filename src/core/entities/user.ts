@@ -1,11 +1,14 @@
 import { UniqueEntityID } from "../domain/value-objects/unique-entity-id";
+import { AuthProvider } from "../enum/AuthProvider";
 import { Optional } from "../types/optional";
 
 export interface UserProps {
   // create interface
   name: string;
   email: string;
-  password: string;
+  password: string | null;
+  googleId?: string | null;
+  provider: AuthProvider;
   createdAt: Date;
   updatedAt: Date | null;
 }
@@ -16,9 +19,14 @@ export class User {
     private props: UserProps, // import fields props
   ) {}
 
-  static create(props: Optional<UserProps, "createdAt" | "updatedAt">, id?: UniqueEntityID) {
+  static create(
+    props: Optional<UserProps, "createdAt" | "updatedAt" | "password" | "googleId">,
+    id?: UniqueEntityID,
+  ) {
     const user = new User(id ?? new UniqueEntityID(), {
       ...props,
+      password: props.password ?? null,
+      googleId: props.googleId ?? null,
       createdAt: props.createdAt ?? new Date(),
       updatedAt: props.updatedAt ?? null,
     });
@@ -38,8 +46,16 @@ export class User {
     return this.props.email;
   }
 
-  get password() {
+  get password(): string | null {
     return this.props.password;
+  }
+
+  get googleId(): string | null | undefined {
+    return this.props.googleId;
+  }
+
+  get provider() {
+    return this.props.provider;
   }
 
   get createdAt(): Date {
@@ -65,6 +81,15 @@ export class User {
     this.touch();
   }
 
+  set googleId(googleId: string) {
+    this.props.googleId = googleId;
+    this.touch();
+  }
+
+  set provider(provider: AuthProvider) {
+    this.props.provider = provider;
+    this.touch();
+  }
   set createdAt(createdAt: Date) {
     this.props.createdAt = createdAt;
     this.touch();

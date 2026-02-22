@@ -11,6 +11,7 @@ import { InMemoryRecipeRepository } from "../../../../test/repositories/in-memor
 import { makeRecipe } from "../../../../test/factories/make-recipe";
 import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { UniqueEntityID } from "../../../core/domain/value-objects/unique-entity-id";
+import { InactiveError } from "../../errors/inactive-error";
 
 let inMemoryRecipeIngredientRepository: InMemoryRecipeIngredientRepository;
 let inMemoryRecipeRepository: InMemoryRecipeRepository;
@@ -126,13 +127,18 @@ describe("Edit Recipe Ingredient", () => {
     expect(result.value).toBeInstanceOf(NotAllowedError);
   });
   it("should not be able to edit ingredient when recipe is not ACTIVE", async () => {
+    const user = makeUser();
+    await inMemoryUserRepository.create(user);
+
     const recipe = makeRecipe({
       status: RecipeStatus.INACTIVE,
+      createdBy: user.id,
     });
     await inMemoryRecipeRepository.create(recipe);
 
     const recipeIngredient = makeRecipeIngredient({
       recipeId: recipe.id,
+      createdBy: user.id,
     });
     await inMemoryRecipeIngredientRepository.create(recipeIngredient);
 
@@ -141,10 +147,10 @@ describe("Edit Recipe Ingredient", () => {
       ingredient: "Farinha",
       amount: "1000",
       unit: MeasurementUnit.G,
-      userId: "user-1",
+      userId: user.id.toString(),
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotAllowedError);
+    expect(result.value).toBeInstanceOf(InactiveError);
   });
 });

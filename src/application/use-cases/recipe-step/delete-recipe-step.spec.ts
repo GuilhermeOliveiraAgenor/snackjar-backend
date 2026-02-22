@@ -10,6 +10,7 @@ import { InMemoryRecipeRepository } from "../../../../test/repositories/in-memor
 import { makeRecipe } from "../../../../test/factories/make-recipe";
 import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { UniqueEntityID } from "../../../core/domain/value-objects/unique-entity-id";
+import { InactiveError } from "../../errors/inactive-error";
 
 let inMemoryRecipeStepRepository: InMemoryRecipeStepRepository;
 let inMemoryRecipeRepository: InMemoryRecipeRepository;
@@ -104,22 +105,27 @@ describe("Delete Recipe Step Use Case", () => {
     expect(result.value).toBeInstanceOf(NotAllowedError);
   });
   it("should not be able to delete step when recipe is not ACTIVE", async () => {
+    const user = makeUser();
+    await inMemoryUserRepository.create(user);
+
     const recipe = makeRecipe({
       status: RecipeStatus.INACTIVE,
+      createdBy: user.id,
     });
     await inMemoryRecipeRepository.create(recipe);
 
     const recipeStep = makeRecipeStep({
       recipeId: recipe.id,
+      createdBy: user.id,
     });
     await inMemoryRecipeStepRepository.create(recipeStep);
 
     const result = await sut.execute({
       id: recipeStep.id.toString(),
-      userId: "user-1,",
+      userId: user.id.toString(),
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotAllowedError);
+    expect(result.value).toBeInstanceOf(InactiveError);
   });
 });

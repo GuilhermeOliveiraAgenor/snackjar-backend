@@ -19,7 +19,9 @@ export class PrismaRecipeDetailsRepository implements RecipeDetailsRepository {
       },
       include: {
         category: true,
-        recipeIngredient: true,
+        recipeIngredient: {
+          orderBy: { createdAt: "asc" },
+        },
         recipeStep: {
           orderBy: { step: "asc" },
         },
