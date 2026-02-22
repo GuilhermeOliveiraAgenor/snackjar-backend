@@ -1,5 +1,6 @@
 import { Either, failure, success } from "../../../core/either";
 import { RecipeIngredient } from "../../../core/entities/recipeIngredient";
+import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { PaginationMeta } from "../../../http/presenters/base/pagination-meta";
 import { InactiveError } from "../../errors/inactive-error";
 import { NotAllowedError } from "../../errors/not-allowed-error";
@@ -40,7 +41,7 @@ export class FetchIngredientsByRecipeUseCase {
       return failure(new NotAllowedError("User"));
     }
 
-    if (recipe.status !== "ACTIVE") {
+    if (recipe.status !== RecipeStatus.ACTIVE) {
       return failure(new InactiveError("Recipe"));
     }
 

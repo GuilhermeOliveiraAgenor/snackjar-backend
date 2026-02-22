@@ -1,6 +1,7 @@
 import { UniqueEntityID } from "../../../core/domain/value-objects/unique-entity-id";
 import { Either, failure, success } from "../../../core/either";
 import { RecipeStep } from "../../../core/entities/recipeStep";
+import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
 import { InactiveError } from "../../errors/inactive-error";
 import { InvalidFieldsError } from "../../errors/invalid-fields-error";
@@ -45,7 +46,7 @@ export class CreateRecipeStepUseCase {
       return failure(new NotAllowedError("User"));
     }
 
-    if (recipe.status !== "ACTIVE") {
+    if (recipe.status !== RecipeStatus.ACTIVE) {
       return failure(new InactiveError("Recipe"));
     }
 

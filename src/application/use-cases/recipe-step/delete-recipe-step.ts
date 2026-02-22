@@ -4,6 +4,7 @@ import { RecipeStepRepository } from "../../repositories/recipe-step-repository"
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { RecipeRepository } from "../../repositories/recipe-repository";
 import { InactiveError } from "../../errors/inactive-error";
+import { RecipeStatus } from "../../../core/enum/recipe-status";
 
 interface DeleteRecipeStepUseCaseRequest {
   id: string;
@@ -39,7 +40,7 @@ export class DeleteRecipeStepUseCase {
       return failure(new NotFoundError("Recipe"));
     }
 
-    if (recipe?.status.toString() !== "ACTIVE") {
+    if (recipe?.status.toString() !== RecipeStatus.ACTIVE) {
       return failure(new InactiveError("Recipe"));
     }
     await this.recipeStepRepository.delete(recipeStep);

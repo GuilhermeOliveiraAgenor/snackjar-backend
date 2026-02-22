@@ -3,11 +3,12 @@ import { User } from "../../../core/entities/user";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
 import { UserRepository } from "../../repositories/user-repository";
 import { IHashProvider } from "../../../core/cryptography/IHashProvider";
+import { AuthProvider } from "../../../core/enum/AuthProvider";
 
 interface CreateUserUseCaseRequest {
   name: User["name"];
   email: User["email"];
-  password: User["password"];
+  password: string;
 }
 
 type CreateUserUseCaseResponse = Either<
@@ -44,6 +45,7 @@ export class CreateUserUseCase {
       name,
       email,
       password: hashedPassword,
+      provider: AuthProvider.local,
     });
 
     // pass to repository

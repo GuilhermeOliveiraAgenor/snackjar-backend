@@ -1,6 +1,7 @@
 import { UniqueEntityID } from "../../../core/domain/value-objects/unique-entity-id";
 import { Either, failure, success } from "../../../core/either";
 import { Recipe } from "../../../core/entities/recipe";
+import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { InactiveError } from "../../errors/inactive-error";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { NotFoundError } from "../../errors/resource-not-found-error";
@@ -28,7 +29,7 @@ export class DeleteRecipeUseCase {
       return failure(new NotFoundError("Recipe"));
     }
 
-    if (recipe.status !== "ACTIVE") {
+    if (recipe.status !== RecipeStatus.ACTIVE) {
       return failure(new InactiveError("Recipe"));
     }
 

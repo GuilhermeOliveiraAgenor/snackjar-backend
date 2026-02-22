@@ -6,6 +6,7 @@ import { RecipeRepository } from "../../repositories/recipe-repository";
 import { RecipeStepRepository } from "../../repositories/recipe-step-repository";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { InactiveError } from "../../errors/inactive-error";
+import { RecipeStatus } from "../../../core/enum/recipe-status";
 
 interface FetchStepsByRecipeUseCaseRequest {
   recipeId: string;
@@ -41,7 +42,7 @@ export class FetchStepsByRecipeUseCase {
       return failure(new NotAllowedError("User"));
     }
 
-    if (recipe.status !== "ACTIVE") {
+    if (recipe.status !== RecipeStatus.ACTIVE) {
       return failure(new InactiveError("Recipe"));
     }
 

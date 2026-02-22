@@ -1,4 +1,5 @@
 import { Either, failure, success } from "../../../core/either";
+import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { InactiveError } from "../../errors/inactive-error";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { NotFoundError } from "../../errors/resource-not-found-error";
@@ -40,7 +41,7 @@ export class DeleteRecipeIngredientUseCase {
       return failure(new NotFoundError("Recipe"));
     }
 
-    if (recipe.status.toString() !== "ACTIVE") {
+    if (recipe.status.toString() !== RecipeStatus.ACTIVE) {
       return failure(new InactiveError("Recipe"));
     }
 

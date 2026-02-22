@@ -16,7 +16,8 @@
         "Recipe": "RECIPE_ALREADY_EXISTS"
     },
     "unauthorized": {
-        "User": "EMAIL_OR_PASSWORD_INVALID"
+        "User": "EMAIL_OR_PASSWORD_INVALID",
+        "Google": "LOGIN_GOOGLE_REQUIRED"
     },
     "validationFields":{
         "PreparationTime": "PREPARATION_TIME_CANT_BE_0",

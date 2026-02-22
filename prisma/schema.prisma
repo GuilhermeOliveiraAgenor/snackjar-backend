@@ -21,12 +21,18 @@
     @@map("categories")
   }
 
+  enum AuthProvider {
+    local
+    google
+  }
 
   model User{
     id            String  @id @default(uuid())
     name          String
     email         String  @unique
-    password      String
+    password      String?
+    googleId      String? @unique
+    provider      AuthProvider @default(local)
 
     createdAt DateTime   @default(now()) @map("created_at")
     updatedAt DateTime?  @updatedAt      @map("updated_at")
