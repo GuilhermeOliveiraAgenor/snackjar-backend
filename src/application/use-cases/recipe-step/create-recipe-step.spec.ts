@@ -11,6 +11,7 @@ import { InMemoryUserRepository } from "../../../../test/repositories/in-memory-
 import { makeRecipeStep } from "../../../../test/factories/make-recipe-step";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
 import { RecipeStatus } from "../../../core/enum/recipe-status";
+import { InactiveError } from "../../errors/inactive-error";
 
 let inMemoryRecipeStepRepository: InMemoryRecipeStepRepository;
 let inMemoryRecipeRepository: InMemoryRecipeRepository;
@@ -114,8 +115,12 @@ describe("Create Recipe Step Use Case", () => {
     expect(result.value).toBeInstanceOf(AlreadyExistsError);
   });
   it("should not be able to create step when recipe is not ACTIVE", async () => {
+    const user = makeUser();
+    await inMemoryUserRepository.create(user);
+
     const recipe = makeRecipe({
       status: RecipeStatus.INACTIVE,
+      createdBy: user.id,
     });
     await inMemoryRecipeRepository.create(recipe);
 
@@ -128,10 +133,10 @@ describe("Create Recipe Step Use Case", () => {
       step: 1,
       description: "Jogue a farinha na bandeja",
       recipeId: recipe.id.toString(),
-      userId: "user-1,",
+      userId: user.id.toString(),
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotAllowedError);
+    expect(result.value).toBeInstanceOf(InactiveError);
   });
 });

@@ -5,6 +5,7 @@ import { NotFoundError } from "../../errors/resource-not-found-error";
 import { RecipeRepository } from "../../repositories/recipe-repository";
 import { RecipeStepRepository } from "../../repositories/recipe-step-repository";
 import { NotAllowedError } from "../../errors/not-allowed-error";
+import { InactiveError } from "../../errors/inactive-error";
 
 interface FetchStepsByRecipeUseCaseRequest {
   recipeId: string;
@@ -13,7 +14,7 @@ interface FetchStepsByRecipeUseCaseRequest {
   perPage?: number;
 }
 type FetchStepsByRecipeResponse = Either<
-  NotFoundError,
+  NotFoundError | InactiveError | NotAllowedError,
   {
     recipeSteps: RecipeStep[];
     meta: PaginationMeta;
@@ -33,15 +34,15 @@ export class FetchStepsByRecipeUseCase {
   }: FetchStepsByRecipeUseCaseRequest): Promise<FetchStepsByRecipeResponse> {
     const recipe = await this.recipeRepository.findById(recipeId);
     if (!recipe) {
-      return failure(new NotFoundError("recipe"));
+      return failure(new NotFoundError("Recipe"));
     }
 
     if (recipe.createdBy.toString() !== userId) {
-      return failure(new NotAllowedError("user"));
+      return failure(new NotAllowedError("User"));
     }
 
     if (recipe.status !== "ACTIVE") {
-      return failure(new NotAllowedError("recipe"));
+      return failure(new InactiveError("Recipe"));
     }
 
     const result = await this.recipeStepRepository.findManyByRecipeId(

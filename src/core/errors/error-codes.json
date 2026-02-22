@@ -1,31 +1,33 @@
 {
     "notFound": {
-        "category": "CATEGORY_NOT_FOUND",
-        "status": "STATUS_NOT_FOUND",
-        "user": "USER_NOT_FOUND",
-        "recipe": "RECIPE_NOT_FOUND",
-        "recipeIngredient": "RECIPE_INGREDIENT_NOT_FOUND",
-        "recipeStep": "RECIPE_STEP_NOT_FOUND",
-        "favoriteRecipe": "FAVORITE_RECIPE_NOT_FOUND"
+        "Category": "CATEGORY_NOT_FOUND",
+        "Status": "STATUS_NOT_FOUND",
+        "User": "USER_NOT_FOUND",
+        "Recipe": "RECIPE_NOT_FOUND",
+        "Ingredient": "RECIPE_INGREDIENT_NOT_FOUND",
+        "Step": "RECIPE_STEP_NOT_FOUND",
+        "Favorite": "FAVORITE_RECIPE_NOT_FOUND"
     },
     "alreadyExists": {
-        "category": "CATEGORY_ALREADY_EXISTS",
-        "user": "USER_ALREADY_EXISTS",
-        "favoriteRecipe": "FAVORITE_RECIPE_ALREADY_EXISTS",
-        "recipeStep": "RECIPE_STEP_ALREADY_EXISTS",
-        "recipe": "RECIPE_ALREADY_EXISTS"
+        "Category": "CATEGORY_ALREADY_EXISTS",
+        "User": "USER_ALREADY_EXISTS",
+        "Favorite": "FAVORITE_RECIPE_ALREADY_EXISTS",
+        "Step": "RECIPE_STEP_ALREADY_EXISTS",
+        "Recipe": "RECIPE_ALREADY_EXISTS"
     },
     "unauthorized": {
-        "user": "EMAIL_OR_PASSWORD_INVALID"
+        "User": "EMAIL_OR_PASSWORD_INVALID"
     },
     "validationFields":{
-        "recipe": "PREPARATION_TIME_CANT_BE_0",
-        "recipeStep": "STEP_CANT_BE_0",
-        "ingredientOrStepNull": "INGREDIENT_OR_STEP_CANT_BE_NULL"
+        "PreparationTime": "PREPARATION_TIME_CANT_BE_0",
+        "Step": "STEP_CANT_BE_0",
+        "Elements": "INGREDIENT_OR_STEP_CANT_BE_NULL"
     },
     "forbidden": {
-        "user": "USER_NOT_ALLOWED",
-        "recipe": "RECIPE_INACTIVE"
+        "User": "USER_NOT_ALLOWED"
+    },
+    "inactive": {
+        "Recipe": "RECIPE_INACTIVE"
     },
     "internal": "INTERNAL_SERVER_ERROR"
 

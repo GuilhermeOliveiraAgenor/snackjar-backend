@@ -6,7 +6,6 @@ import { RecipeRepository } from "../../repositories/recipe-repository";
 import { UniqueEntityID } from "../../../core/domain/value-objects/unique-entity-id";
 import { RecipeIngredient } from "../../../core/entities/recipeIngredient";
 import { CategoryRepository } from "../../repositories/category-repository";
-import { RecipeNullError } from "../../errors/recipe-null-error";
 import { RecipeStep } from "../../../core/entities/recipeStep";
 import { RecipeStepRepository } from "../../repositories/recipe-step-repository";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
@@ -38,7 +37,7 @@ interface CreateRecipeUseCaseRequest {
 }
 
 type CreateRecipeUseCaseResponse = Either<
-  NotFoundError | RecipeNullError | AlreadyExistsError | InvalidFieldsError,
+  NotFoundError | InvalidFieldsError | AlreadyExistsError | InvalidFieldsError,
   {
     recipe: Recipe;
   }
@@ -65,21 +64,21 @@ export class CreateRecipeUseCase {
 
     const category = await this.categoryRepository.findById(categoryId);
     if (!category) {
-      return failure(new NotFoundError("category"));
+      return failure(new NotFoundError("Category"));
     }
 
     // verify if lists are null
     if (recipeIngredient.length === 0 || recipeStep.length === 0) {
-      return failure(new RecipeNullError("ingredientOrStepNull"));
+      return failure(new InvalidFieldsError("Elements"));
     }
 
     const alreadyExists = await this.recipeRepository.findByUserIdAndTitle(userId, title);
     if (alreadyExists) {
-      return failure(new AlreadyExistsError("recipe"));
+      return failure(new AlreadyExistsError("Recipe"));
     }
 
     if (preparationTime <= 0) {
-      return failure(new InvalidFieldsError("recipe"));
+      return failure(new InvalidFieldsError("PreparationTime"));
     }
 
     // create recipe
@@ -117,12 +116,12 @@ export class CreateRecipeUseCase {
 
     const hasDuplicatedSteps = steps.some((value, index) => steps.indexOf(value) !== index);
     if (hasDuplicatedSteps) {
-      return failure(new AlreadyExistsError("recipeStep"));
+      return failure(new AlreadyExistsError("Step"));
     }
 
     const hasInvalidSteps = steps.some((step) => step <= 0);
     if (hasInvalidSteps) {
-      return failure(new InvalidFieldsError("recipeStep"));
+      return failure(new InvalidFieldsError("Step"));
     }
 
     await this.recipeRepository.create(recipe);

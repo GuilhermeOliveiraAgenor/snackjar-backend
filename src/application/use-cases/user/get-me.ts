@@ -23,7 +23,7 @@ export class GetMeUseCase {
     // verify if user exists
 
     if (!user) {
-      return failure(new NotFoundError("user"));
+      return failure(new NotFoundError("User"));
     }
 
     return success({

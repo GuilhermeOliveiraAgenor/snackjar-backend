@@ -33,7 +33,7 @@ export class CreateUserUseCase {
     // verify client already exists
 
     if (userWithSameEmail) {
-      return failure(new AlreadyExistsError("user"));
+      return failure(new AlreadyExistsError("User"));
     }
 
     // hash password

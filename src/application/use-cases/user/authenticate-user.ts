@@ -29,13 +29,13 @@ export class AuthenticateUserUseCase {
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      return failure(new InvalidCredentialsError("user"));
+      return failure(new InvalidCredentialsError("User"));
     }
     // verify password
     const isValid = await this.hashProvider.compare(password, user.password);
 
     if (!isValid) {
-      return failure(new InvalidCredentialsError("user"));
+      return failure(new InvalidCredentialsError("User"));
     }
 
     return success({ userId: user.id.toString() });

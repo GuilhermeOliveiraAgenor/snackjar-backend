@@ -19,11 +19,11 @@ export class DeleteFavoriteRecipeUseCase {
   }: DeleteFavoriteRecipeUseCaseRequest): Promise<DeleteFavoriteRecipeUseCaseResponse> {
     const favoriteRecipe = await this.favoriteRecipeRepository.findById(id);
     if (!favoriteRecipe) {
-      return failure(new NotFoundError("favoriteRecipe"));
+      return failure(new NotFoundError("Favorite"));
     }
 
     if (favoriteRecipe.createdBy.toString() !== userId) {
-      return failure(new NotAllowedError("user"));
+      return failure(new NotAllowedError("User"));
     }
 
     await this.favoriteRecipeRepository.delete(favoriteRecipe);

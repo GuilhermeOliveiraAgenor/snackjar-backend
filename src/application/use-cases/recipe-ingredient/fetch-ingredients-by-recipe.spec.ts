@@ -9,6 +9,7 @@ import { makeUser } from "../../../../test/factories/make-user";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { FetchIngredientsByRecipeUseCase } from "./fetch-ingredients-by-recipe";
 import { RecipeStatus } from "../../../core/enum/recipe-status";
+import { InactiveError } from "../../errors/inactive-error";
 
 let inMemoryRecipeIngredientRepository: InMemoryRecipeIngredientRepository;
 let inMemoryUserRepository: InMemoryUserRepository;
@@ -92,7 +93,7 @@ describe("Fetch Recipe Ingredients By Recipe Id", () => {
     expect(inMemoryRecipeRepository.items).toHaveLength(1);
     expect(result.value).toBeInstanceOf(NotAllowedError);
   });
-  it("should not be able to fetch ingredients when recipe is not active", async () => {
+  it("should not be able to fetch ingredients when recipe is not ", async () => {
     const user = makeUser();
     await inMemoryUserRepository.create(user);
 
@@ -114,6 +115,6 @@ describe("Fetch Recipe Ingredients By Recipe Id", () => {
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotAllowedError);
+    expect(result.value).toBeInstanceOf(InactiveError);
   });
 });

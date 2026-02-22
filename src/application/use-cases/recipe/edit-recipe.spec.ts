@@ -10,6 +10,7 @@ import { NotAllowedError } from "../../errors/not-allowed-error";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
 import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { InMemoryCategoryRepository } from "../../../../test/repositories/in-memory-category-repository";
+import { InactiveError } from "../../errors/inactive-error";
 
 let inMemoryRecipeRepository: InMemoryRecipeRepository;
 let inMemoryUserRepository: InMemoryUserRepository;
@@ -135,8 +136,12 @@ describe("Edit Recipe Use Case", () => {
     expect(result.value).toBeInstanceOf(AlreadyExistsError);
   });
   it("should not be able to delete recipe is not ACTIVE", async () => {
+    const user = makeUser();
+    await inMemoryUserRepository.create(user);
+
     const recipe = makeRecipe({
       status: RecipeStatus.INACTIVE,
+      createdBy: user.id,
     });
     await inMemoryRecipeRepository.create(recipe);
 
@@ -145,10 +150,10 @@ describe("Edit Recipe Use Case", () => {
       title: "Bolo de Cenoura",
       description: "Receita de Bolo de Cenoura",
       preparationTime: 60,
-      userId: "user-1",
+      userId: user.id.toString(),
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotAllowedError);
+    expect(result.value).toBeInstanceOf(InactiveError);
   });
 });

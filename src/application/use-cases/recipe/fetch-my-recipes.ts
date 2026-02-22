@@ -37,7 +37,7 @@ export class FetchMyRecipesUseCase {
     // verify if user exists
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      return failure(new NotFoundError("user"));
+      return failure(new NotFoundError("User"));
     }
 
     const result = await this.recipeRepository.findManyByUserId(

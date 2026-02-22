@@ -23,7 +23,7 @@ export class GetDetailsByRecipeIdUseCase {
   async execute({ recipeId }: GetDetailsByRecipeIdRequest): Promise<GetDetailsByRecipeIdResponse> {
     const details = await this.recipeDetailsRepository.getDetailsByRecipeId(recipeId);
     if (!details) {
-      return failure(new NotFoundError("recipe"));
+      return failure(new NotFoundError("Recipe"));
     }
 
     return success(details);

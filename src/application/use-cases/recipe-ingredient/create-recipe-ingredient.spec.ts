@@ -11,6 +11,7 @@ import { NotAllowedError } from "../../errors/not-allowed-error";
 import { MeasurementUnit } from "../../../core/enum/measurement-unit";
 import { makeRecipeIngredient } from "../../../../test/factories/make-recipe-ingredient";
 import { RecipeStatus } from "../../../core/enum/recipe-status";
+import { InactiveError } from "../../errors/inactive-error";
 
 let inMemoryRecipeIngredientRepository: InMemoryRecipeIngredientRepository;
 let inMemoryRecipeRepository: InMemoryRecipeRepository;
@@ -97,8 +98,12 @@ describe("Create Recipe Ingredient Use Case", () => {
     expect(result.value).toBeInstanceOf(NotAllowedError);
   });
   it("should not be able to create ingredient when recipe is not ACTIVE", async () => {
+    const user = makeUser();
+    await inMemoryUserRepository.create(user);
+
     const recipe = makeRecipe({
       status: RecipeStatus.INACTIVE,
+      createdBy: user.id,
     });
     await inMemoryRecipeRepository.create(recipe);
 
@@ -112,10 +117,10 @@ describe("Create Recipe Ingredient Use Case", () => {
       amount: "1000",
       unit: MeasurementUnit.G,
       recipeId: recipe.id.toString(),
-      userId: "user-1,",
+      userId: user.id.toString(),
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotAllowedError);
+    expect(result.value).toBeInstanceOf(InactiveError);
   });
 });

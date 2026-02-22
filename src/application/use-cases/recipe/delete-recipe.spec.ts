@@ -9,6 +9,7 @@ import { InMemoryUserRepository } from "../../../../test/repositories/in-memory-
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { RecipeStatus } from "../../../core/enum/recipe-status";
 import { InMemoryCategoryRepository } from "../../../../test/repositories/in-memory-category-repository";
+import { InactiveError } from "../../errors/inactive-error";
 
 let inMemoryRecipeRepository: InMemoryRecipeRepository;
 let inMemoryCategoryRepository: InMemoryCategoryRepository;
@@ -74,8 +75,12 @@ describe("Soft delete Recipe Use Case", () => {
     expect(result.value).toBeInstanceOf(NotAllowedError);
   });
   it("should not be able to delete recipe is not ACTIVE", async () => {
+    const user = makeUser();
+    await inMemoryUserRepository.create(user);
+
     const recipe = makeRecipe({
       status: RecipeStatus.INACTIVE,
+      createdBy: user.id,
     });
     await inMemoryRecipeRepository.create(recipe);
 
@@ -85,6 +90,6 @@ describe("Soft delete Recipe Use Case", () => {
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotAllowedError);
+    expect(result.value).toBeInstanceOf(InactiveError);
   });
 });

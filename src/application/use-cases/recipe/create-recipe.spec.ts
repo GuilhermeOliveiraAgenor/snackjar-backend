@@ -4,7 +4,6 @@ import { CreateRecipeUseCase } from "./create-recipe";
 import { InMemoryRecipeIngredientRepository } from "../../../../test/repositories/in-memory-recipe-ingredient";
 import { Category } from "../../../core/entities/category";
 import { NotFoundError } from "../../errors/resource-not-found-error";
-import { RecipeNullError } from "../../errors/recipe-null-error";
 import { InMemoryRecipeStepRepository } from "../../../../test/repositories/in-memory-recipe-step";
 import { makeCategory } from "../../../../test/factories/make-category";
 import { InMemoryUserRepository } from "../../../../test/repositories/in-memory-user-repository";
@@ -14,6 +13,7 @@ import { UniqueEntityID } from "../../../core/domain/value-objects/unique-entity
 import { AlreadyExistsError } from "../../errors/already-exists-error";
 import { MeasurementUnit } from "../../../core/enum/measurement-unit";
 import { InMemoryCategoryRepository } from "../../../../test/repositories/in-memory-category-repository";
+import { InvalidFieldsError } from "../../errors/invalid-fields-error";
 
 let inMemoryRecipeRepository: InMemoryRecipeRepository;
 let inMemoryRecipeIngredientRepository: InMemoryRecipeIngredientRepository;
@@ -262,7 +262,7 @@ describe("Create Recipe Use Case", () => {
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(RecipeNullError);
+    expect(result.value).toBeInstanceOf(InvalidFieldsError);
     expect(inMemoryRecipeRepository.items).toHaveLength(0);
   });
   it("should not be able to create a recipe without steps", async () => {
@@ -295,7 +295,7 @@ describe("Create Recipe Use Case", () => {
     });
 
     expect(result.isError()).toBe(true);
-    expect(result.value).toBeInstanceOf(RecipeNullError);
+    expect(result.value).toBeInstanceOf(InvalidFieldsError);
     expect(inMemoryRecipeRepository.items).toHaveLength(0);
   });
   it("should not be able to create a recipe with duplicated steps", async () => {

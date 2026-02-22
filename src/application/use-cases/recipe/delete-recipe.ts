@@ -1,6 +1,7 @@
 import { UniqueEntityID } from "../../../core/domain/value-objects/unique-entity-id";
 import { Either, failure, success } from "../../../core/either";
 import { Recipe } from "../../../core/entities/recipe";
+import { InactiveError } from "../../errors/inactive-error";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { NotFoundError } from "../../errors/resource-not-found-error";
 import { RecipeRepository } from "../../repositories/recipe-repository";
@@ -11,7 +12,7 @@ interface DeleteRecipeRequest {
 }
 
 type DeleteRecipeResponse = Either<
-  NotFoundError | NotAllowedError,
+  NotFoundError | NotAllowedError | InactiveError,
   {
     recipe: Recipe;
   }
@@ -24,15 +25,15 @@ export class DeleteRecipeUseCase {
     // verify if exists recipe
     const recipe = await this.recipeRepository.findById(id);
     if (!recipe) {
-      return failure(new NotFoundError("recipe"));
+      return failure(new NotFoundError("Recipe"));
     }
 
     if (recipe.status !== "ACTIVE") {
-      return failure(new NotAllowedError("recipe"));
+      return failure(new InactiveError("Recipe"));
     }
 
     if (recipe.createdBy.toString() != userId) {
-      return failure(new NotAllowedError("user"));
+      return failure(new NotAllowedError("User"));
     }
     // inactive recipe
     recipe.inactivate();

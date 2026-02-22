@@ -3,13 +3,17 @@ import { NotFoundError } from "../../errors/resource-not-found-error";
 import { RecipeStepRepository } from "../../repositories/recipe-step-repository";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { RecipeRepository } from "../../repositories/recipe-repository";
+import { InactiveError } from "../../errors/inactive-error";
 
 interface DeleteRecipeStepUseCaseRequest {
   id: string;
   userId: string;
 }
 
-type DeleteRecipeStepUseCaseResponse = Either<NotFoundError | NotAllowedError, null>;
+type DeleteRecipeStepUseCaseResponse = Either<
+  NotFoundError | NotAllowedError | InactiveError,
+  null
+>;
 
 export class DeleteRecipeStepUseCase {
   constructor(
@@ -22,21 +26,21 @@ export class DeleteRecipeStepUseCase {
   }: DeleteRecipeStepUseCaseRequest): Promise<DeleteRecipeStepUseCaseResponse> {
     const recipeStep = await this.recipeStepRepository.findById(id);
     if (!recipeStep) {
-      return failure(new NotFoundError("recipeStep"));
+      return failure(new NotFoundError("Step"));
     }
 
     if (recipeStep.createdBy.toString() != userId) {
-      return failure(new NotAllowedError("user"));
+      return failure(new NotAllowedError("User"));
     }
 
     const recipe = await this.recipeRepository.findById(recipeStep.recipeId.toString());
 
     if (!recipe) {
-      return failure(new NotFoundError("recipe"));
+      return failure(new NotFoundError("Recipe"));
     }
 
     if (recipe?.status.toString() !== "ACTIVE") {
-      return failure(new NotAllowedError("recipe"));
+      return failure(new InactiveError("Recipe"));
     }
     await this.recipeStepRepository.delete(recipeStep);
 

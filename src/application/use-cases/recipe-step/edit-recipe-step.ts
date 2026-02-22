@@ -2,6 +2,7 @@ import { UniqueEntityID } from "../../../core/domain/value-objects/unique-entity
 import { Either, failure, success } from "../../../core/either";
 import { RecipeStep } from "../../../core/entities/recipeStep";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
+import { InactiveError } from "../../errors/inactive-error";
 import { InvalidFieldsError } from "../../errors/invalid-fields-error";
 import { NotAllowedError } from "../../errors/not-allowed-error";
 import { NotFoundError } from "../../errors/resource-not-found-error";
@@ -16,7 +17,7 @@ interface EditRecipeStepUseCaseRequest {
 }
 
 type EditRecipeStepUseCaseResponse = Either<
-  NotFoundError | NotAllowedError | AlreadyExistsError | InvalidFieldsError,
+  NotFoundError | NotAllowedError | AlreadyExistsError | InvalidFieldsError | InactiveError,
   {
     recipeStep: RecipeStep;
   }
@@ -35,34 +36,34 @@ export class EditRecipeStepUseCase {
   }: EditRecipeStepUseCaseRequest): Promise<EditRecipeStepUseCaseResponse> {
     const recipeStep = await this.recipeStepRepository.findById(id);
     if (!recipeStep) {
-      return failure(new NotFoundError("recipeStep"));
+      return failure(new NotFoundError("Step"));
     }
 
     if (recipeStep.createdBy.toString() != userId) {
-      return failure(new NotAllowedError("user"));
+      return failure(new NotAllowedError("User"));
     }
 
     if (step !== undefined) {
       if (step <= 0) {
-        return failure(new InvalidFieldsError("recipeStep"));
+        return failure(new InvalidFieldsError("Step"));
       }
       const stepDuplicated = await this.recipeStepRepository.findByRecipeIdAndStep(
         recipeStep.recipeId.toString(),
         step,
       );
       if (stepDuplicated && stepDuplicated.id.toString() !== id) {
-        return failure(new AlreadyExistsError("recipeStep"));
+        return failure(new AlreadyExistsError("Step"));
       }
     }
 
     const recipe = await this.recipeRepository.findById(recipeStep.recipeId.toString());
 
     if (!recipe) {
-      return failure(new NotFoundError("recipe"));
+      return failure(new NotFoundError("Recipe"));
     }
 
     if (recipe.status !== "ACTIVE") {
-      return failure(new NotAllowedError("recipe"));
+      return failure(new InactiveError("Recipe"));
     }
 
     recipeStep.step = step ?? recipeStep.step;
