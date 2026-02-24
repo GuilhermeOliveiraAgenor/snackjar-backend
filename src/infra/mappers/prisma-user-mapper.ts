@@ -12,6 +12,7 @@ export class PrismaUserMapper {
         password: raw.password,
         googleId: raw.googleId,
         provider: raw.provider as AuthProvider,
+        avatarUrl: raw.avatarUrl,
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },
@@ -26,6 +27,7 @@ export class PrismaUserMapper {
       password: raw.password ? raw.password.toString() : null,
       googleId: raw.googleId ? raw.googleId.toString() : null,
       provider: raw.provider,
+      avatarUrl: raw.avatarUrl ? raw.avatarUrl.toString() : null,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
     };

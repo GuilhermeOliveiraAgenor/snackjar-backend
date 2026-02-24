@@ -4,6 +4,7 @@ export interface GoogleUserPayload {
   googleId: string;
   email: string;
   name: string;
+  avatarUrl: string;
 }
 
 export class GoogleTokenVerifier {
@@ -37,6 +38,7 @@ export class GoogleTokenVerifier {
       googleId: payload.sub!,
       name: payload.name!,
       email: payload.email!,
+      avatarUrl: payload.picture!,
     };
   }
 }

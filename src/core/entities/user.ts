@@ -8,6 +8,7 @@ export interface UserProps {
   email: string;
   password: string | null;
   googleId?: string | null;
+  avatarUrl?: string | null;
   provider: AuthProvider;
   createdAt: Date;
   updatedAt: Date | null;
@@ -20,13 +21,14 @@ export class User {
   ) {}
 
   static create(
-    props: Optional<UserProps, "createdAt" | "updatedAt" | "password" | "googleId">,
+    props: Optional<UserProps, "createdAt" | "updatedAt" | "password" | "googleId" | "avatarUrl">,
     id?: UniqueEntityID,
   ) {
     const user = new User(id ?? new UniqueEntityID(), {
       ...props,
       password: props.password ?? null,
       googleId: props.googleId ?? null,
+      avatarUrl: props.avatarUrl ?? null,
       createdAt: props.createdAt ?? new Date(),
       updatedAt: props.updatedAt ?? null,
     });
@@ -56,6 +58,10 @@ export class User {
 
   get provider() {
     return this.props.provider;
+  }
+
+  get avatarUrl(): string | null | undefined {
+    return this.props.avatarUrl;
   }
 
   get createdAt(): Date {
@@ -90,6 +96,12 @@ export class User {
     this.props.provider = provider;
     this.touch();
   }
+
+  set avatarUrl(avatarUrl: string | null) {
+    this.props.avatarUrl = avatarUrl;
+    this.touch();
+  }
+
   set createdAt(createdAt: Date) {
     this.props.createdAt = createdAt;
     this.touch();

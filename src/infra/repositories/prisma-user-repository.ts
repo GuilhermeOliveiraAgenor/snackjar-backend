@@ -11,6 +11,14 @@ export class PrismaUserRepository implements UserRepository {
       data: PrismaUserMapper.toPersistency(user),
     });
   }
+  async save(user: User): Promise<void> {
+    await this.prisma.user.update({
+      where: {
+        id: user.id.toString(),
+      },
+      data: PrismaUserMapper.toPersistency(user),
+    });
+  }
   async findById(id: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { id },
