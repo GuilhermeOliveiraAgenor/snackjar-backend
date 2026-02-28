@@ -1,5 +1,6 @@
 import { Either, success, failure } from "../../../core/either";
 import { Category } from "../../../core/entities/category";
+import { RedisCache } from "../../../infra/cache/redis-cache";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
 import { NotFoundError } from "../../errors/resource-not-found-error";
 import { CategoryRepository } from "../../repositories/category-repository";
@@ -18,7 +19,10 @@ type EditCategoryUseCaseResponse = Either<
 >;
 
 export class EditCategoryUseCase {
-  constructor(private categoryRepository: CategoryRepository) {}
+  constructor(
+    private categoryRepository: CategoryRepository,
+    private cache: RedisCache,
+  ) {}
 
   async execute({
     name,
@@ -45,6 +49,8 @@ export class EditCategoryUseCase {
 
     // pass to repository
     await this.categoryRepository.save(category);
+
+    await this.cache.deletePattern("categories:*");
 
     return success({
       category,

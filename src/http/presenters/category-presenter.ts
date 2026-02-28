@@ -5,7 +5,7 @@ import { PaginationMeta } from "./base/pagination-meta";
 export class CategoryPresenter {
   private static map(raw: Category) {
     return {
-      id: raw.id.toString(),
+      id: raw.id,
       name: raw.name,
       description: raw.description,
       createdAt: raw.createdAt,
