@@ -17,23 +17,10 @@ export class PrismaCategoryRepository implements CategoryRepository {
       data: PrismaCategoryMapper.toPersistency(category),
     });
   }
-  async findMany(
-    page: number,
-    perPage: number,
-  ): Promise<{ categories: Category[]; totalCount: number }> {
-    const skip = (page - 1) * perPage;
+  async findMany(): Promise<Category[]> {
+    const categories = await this.prisma.category.findMany();
 
-    const [totalCount, categories] = await Promise.all([
-      this.prisma.category.count(),
-      this.prisma.category.findMany({
-        skip,
-        take: perPage,
-      }),
-    ]);
-    return {
-      categories: categories.map((raw) => PrismaCategoryMapper.toDomain(raw)),
-      totalCount,
-    };
+    return categories.map(PrismaCategoryMapper.toDomain);
   }
   async findByName(name: string): Promise<Category | null> {
     const category = await this.prisma.category.findFirst({

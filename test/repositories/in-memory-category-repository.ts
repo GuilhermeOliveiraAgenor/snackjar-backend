@@ -11,18 +11,8 @@ export class InMemoryCategoryRepository implements CategoryRepository {
     const itemIndex = this.items.findIndex((item) => item.id === category.id);
     this.items[itemIndex] = category;
   }
-  async findMany(
-    page: number,
-    perPage: number,
-  ): Promise<{ categories: Category[]; totalCount: number }> {
-    const totalCount = this.items.length;
-
-    const categories = this.items.slice((page - 1) * perPage, page * perPage);
-
-    return {
-      categories,
-      totalCount,
-    };
+  async findMany(): Promise<Category[]> {
+    return this.items;
   }
   async findByName(name: string): Promise<Category | null> {
     const category = this.items.find((item) => item.name == name);
