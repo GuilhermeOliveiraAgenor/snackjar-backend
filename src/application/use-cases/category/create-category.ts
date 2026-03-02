@@ -2,8 +2,7 @@ import { Category } from "../../../core/entities/category";
 import { CategoryRepository } from "../../repositories/category-repository";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
 import { Either, failure, success } from "../../../core/either";
-import { RedisCache } from "../../../infra/cache/redis-cache";
-
+import { ICacheRepository } from "../../../core/cache/IRedisCache";
 interface CreateCategoryUseCaseRequest {
   // create data request
   name: Category["name"];
@@ -21,7 +20,7 @@ type CreateCategoryUseCaseResponse = Either<
 export class CreateCategoryUseCase {
   constructor(
     private categoryRepository: CategoryRepository,
-    private cache: RedisCache,
+    private cache: ICacheRepository,
   ) {} // define repository
 
   async execute({

@@ -4,14 +4,19 @@ import { EditCategoryUseCase } from "../category/edit-category";
 import { makeCategory } from "../../../../test/factories/make-category";
 import { AlreadyExistsError } from "../../errors/already-exists-error";
 import { InMemoryCategoryRepository } from "../../../../test/repositories/in-memory-category-repository";
+import { InMemoryRedisCache } from "../../../../test/cache/redis-cache";
 
 let inMemoryCategoryRepository: InMemoryCategoryRepository;
+let inMemoryRedisCache: InMemoryRedisCache;
+
 let sut: EditCategoryUseCase;
 
 describe("Edit Category Use Case", () => {
   beforeEach(() => {
     inMemoryCategoryRepository = new InMemoryCategoryRepository(); // define repository
-    sut = new EditCategoryUseCase(inMemoryCategoryRepository); // use case receive repository
+    inMemoryRedisCache = new InMemoryRedisCache();
+
+    sut = new EditCategoryUseCase(inMemoryCategoryRepository, inMemoryRedisCache); // use case receive repository
   });
 
   it("should be able to update category", async () => {

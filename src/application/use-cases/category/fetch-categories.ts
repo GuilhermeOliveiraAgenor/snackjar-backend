@@ -1,6 +1,6 @@
+import { ICacheRepository } from "../../../core/cache/IRedisCache";
 import { Either, success } from "../../../core/either";
 import { Category } from "../../../core/entities/category";
-import { RedisCache } from "../../../infra/cache/redis-cache";
 import { CategoryRepository } from "../../repositories/category-repository";
 
 type FetchCategoriesUseCaseResponse = Either<
@@ -12,7 +12,7 @@ type FetchCategoriesUseCaseResponse = Either<
 export class FetchCategoriesUseCase {
   constructor(
     private categoryRepository: CategoryRepository,
-    private cache: RedisCache, // repositorio redis
+    private cache: ICacheRepository, // repositorio redis
   ) {}
   async execute(): Promise<FetchCategoriesUseCaseResponse> {
     const cacheKey = "categories:all";

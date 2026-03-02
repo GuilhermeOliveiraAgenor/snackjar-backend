@@ -3,14 +3,18 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { CreateCategoryUseCase } from "./create-category";
 import { makeCategory } from "../../../../test/factories/make-category";
 import { InMemoryCategoryRepository } from "../../../../test/repositories/in-memory-category-repository";
+import { InMemoryRedisCache } from "../../../../test/cache/redis-cache";
 
 let inMemoryCategoryRepository: InMemoryCategoryRepository;
+let inMemoryRedisCache: InMemoryRedisCache;
+
 let sut: CreateCategoryUseCase;
 
 describe("Category Use Case", () => {
   beforeEach(() => {
     inMemoryCategoryRepository = new InMemoryCategoryRepository(); // define repository
-    sut = new CreateCategoryUseCase(inMemoryCategoryRepository); // use case receive repository
+    inMemoryRedisCache = new InMemoryRedisCache();
+    sut = new CreateCategoryUseCase(inMemoryCategoryRepository, inMemoryRedisCache); // use case receive repository
   });
   it("should be able to create a category", async () => {
     const result = await sut.execute({

@@ -1,6 +1,7 @@
+import { ICacheRepository } from "../../core/cache/IRedisCache";
 import { redis } from "./redis-client";
 
-export class RedisCache {
+export class RedisCache implements ICacheRepository {
   async get<T>(key: string): Promise<T | null> {
     const data = await redis.get(key);
 
