@@ -52,10 +52,10 @@ export class RecipeDetailsPresenter {
   }) {
     return BasePresenter.toResponse({
       recipe: this.mapRecipe(data.recipe),
-      ingredients: data.recipeIngredients.map((recipeIngredient) =>
-        this.mapRecipeIngredient(recipeIngredient),
+      recipeIngredients: data.recipeIngredients.map((ingredient) =>
+        this.mapRecipeIngredient(ingredient),
       ),
-      steps: data.recipeSteps.map((recipeStep) => this.mapRecipeStep(recipeStep)),
+      recipeSteps: data.recipeSteps.map((step) => this.mapRecipeStep(step)),
     });
   }
 }
