@@ -31,7 +31,7 @@ export class FetchCategoriesUseCase {
       cacheKey,
       {
         categories: result.map((c: Category) => ({
-          id: c.id,
+          id: c.id.toString(),
           name: c.name,
           description: c.description,
           createdAt: c.createdAt,
