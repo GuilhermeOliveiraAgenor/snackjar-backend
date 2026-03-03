@@ -8,9 +8,11 @@ import { PrismaRecipeDetailsMapper } from "../mappers/prisma-recipe-details-mapp
 export class PrismaRecipeDetailsRepository implements RecipeDetailsRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async getDetailsByRecipeId(
-    recipeId: string,
-  ): Promise<{ recipe: Recipe; steps: RecipeStep[]; ingredients: RecipeIngredient[] } | null> {
+  async getDetailsByRecipeId(recipeId: string): Promise<{
+    recipe: Recipe;
+    recipeSteps: RecipeStep[];
+    recipeIngredients: RecipeIngredient[];
+  } | null> {
     const recipe = await this.prisma.recipe.findFirst({
       where: {
         id: recipeId,

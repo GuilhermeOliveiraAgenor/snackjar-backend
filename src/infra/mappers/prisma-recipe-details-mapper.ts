@@ -20,9 +20,9 @@ export class PrismaRecipeDetailsMapper {
     return {
       recipe: PrismaRecipeMapper.toDomain(raw),
 
-      ingredients: raw.recipeIngredient.map(PrismaRecipeIngredientMapper.toDomain),
+      recipeIngredients: raw.recipeIngredient.map(PrismaRecipeIngredientMapper.toDomain),
 
-      steps: raw.recipeStep.map(PrismaRecipeStepMapper.toDomain),
+      recipeSteps: raw.recipeStep.map(PrismaRecipeStepMapper.toDomain),
     };
   }
 }
