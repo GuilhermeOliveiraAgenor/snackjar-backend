@@ -22,7 +22,7 @@ function generateUniqueDatabaseURL(schemaId: string) {
 
 beforeAll(async () => {
   // set database url with schema UUID
-  env.DATABASE_URL = generateUniqueDatabaseURL(schemaId);
+  process.env.DATABASE_URL = generateUniqueDatabaseURL(schemaId);
 
   // run migration
   execSync("npx prisma migrate deploy");
