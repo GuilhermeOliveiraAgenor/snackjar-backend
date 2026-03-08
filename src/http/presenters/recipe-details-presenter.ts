@@ -45,11 +45,17 @@ export class RecipeDetailsPresenter {
       updatedBy: raw.updatedBy?.toString(),
     };
   }
-  static toHTTP(data: { recipe: Recipe; ingredients: RecipeIngredient[]; steps: RecipeStep[] }) {
+  static toHTTP(data: {
+    recipe: Recipe;
+    recipeIngredients: RecipeIngredient[];
+    recipeSteps: RecipeStep[];
+  }) {
     return BasePresenter.toResponse({
       recipe: this.mapRecipe(data.recipe),
-      ingredients: data.ingredients.map((ingredient) => this.mapRecipeIngredient(ingredient)),
-      steps: data.steps.map((step) => this.mapRecipeStep(step)),
+      recipeIngredients: data.recipeIngredients.map((ingredient) =>
+        this.mapRecipeIngredient(ingredient),
+      ),
+      recipeSteps: data.recipeSteps.map((step) => this.mapRecipeStep(step)),
     });
   }
 }

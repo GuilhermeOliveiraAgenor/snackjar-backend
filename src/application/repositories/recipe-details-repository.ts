@@ -5,7 +5,7 @@ import { RecipeStep } from "../../core/entities/recipeStep";
 export interface RecipeDetailsRepository {
   getDetailsByRecipeId(recipeId: string): Promise<{
     recipe: Recipe;
-    ingredients: RecipeIngredient[];
-    steps: RecipeStep[];
+    recipeIngredients: RecipeIngredient[];
+    recipeSteps: RecipeStep[];
   } | null>;
 }

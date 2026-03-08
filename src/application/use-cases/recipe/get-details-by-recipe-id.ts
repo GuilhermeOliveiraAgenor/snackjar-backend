@@ -13,8 +13,8 @@ type GetDetailsByRecipeIdResponse = Either<
   NotFoundError,
   {
     recipe: Recipe;
-    ingredients: RecipeIngredient[];
-    steps: RecipeStep[];
+    recipeIngredients: RecipeIngredient[];
+    recipeSteps: RecipeStep[];
   }
 >;
 

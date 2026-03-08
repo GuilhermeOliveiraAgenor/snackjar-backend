@@ -7,6 +7,7 @@ interface AuthenticateGoogleUserRequest {
   googleId: string;
   name: string;
   email: string;
+  avatarUrl?: string;
 }
 
 type AuthenticateGoogleUserResponse = Either<
@@ -22,6 +23,7 @@ export class AuthenticateGoogleUserUseCase {
     googleId,
     name,
     email,
+    avatarUrl,
   }: AuthenticateGoogleUserRequest): Promise<AuthenticateGoogleUserResponse> {
     let user = await this.userRepository.findByEmail(email);
 
@@ -31,6 +33,7 @@ export class AuthenticateGoogleUserUseCase {
         email,
         googleId,
         provider: AuthProvider.google,
+        avatarUrl: avatarUrl ?? null,
       });
 
       await this.userRepository.create(user);
@@ -38,15 +41,20 @@ export class AuthenticateGoogleUserUseCase {
       return success({ user });
     }
 
-    // if (user.provider === "local") {
-    //   user.googleId = googleId;
-    //   await this.userRepository.save(user);
-    // }
+    if (user.provider === AuthProvider.local) {
+      user.googleId = googleId;
+    }
 
-    // if (!user.googleId) {
-    //   user.googleId = googleId;
-    //   await this.userRepository.save(user);
-    // }
+    if (!user.googleId) {
+      user.googleId = googleId;
+      user.provider = AuthProvider.google;
+    }
+
+    if (avatarUrl && !user.avatarUrl) {
+      user.avatarUrl = avatarUrl;
+    }
+
+    await this.userRepository.save(user);
 
     return success({ user });
   }

@@ -1,26 +1,46 @@
+import { ICacheRepository } from "../../../core/cache/IRedisCache";
 import { Either, success } from "../../../core/either";
 import { Category } from "../../../core/entities/category";
-import { PaginationMeta } from "../../../http/presenters/base/pagination-meta";
 import { CategoryRepository } from "../../repositories/category-repository";
 
 type FetchCategoriesUseCaseResponse = Either<
   null,
   {
     categories: Category[];
-    meta: PaginationMeta;
   }
 >;
 export class FetchCategoriesUseCase {
-  constructor(private categoryRepository: CategoryRepository) {}
-  async execute({ page = 1, perPage = 10 }): Promise<FetchCategoriesUseCaseResponse> {
-    const result = await this.categoryRepository.findMany(page, perPage);
+  constructor(
+    private categoryRepository: CategoryRepository,
+    private cache: ICacheRepository, // repositorio redis
+  ) {}
+  async execute(): Promise<FetchCategoriesUseCaseResponse> {
+    const cacheKey = "categories:all";
 
-    const meta: PaginationMeta = {
-      page,
-      per_page: perPage,
-      total_count: result.totalCount,
-    };
+    const cached = await this.cache.get<{
+      categories: Category[];
+    }>(cacheKey);
 
-    return success({ categories: result.categories, meta });
+    if (cached) {
+      return success(cached);
+    }
+
+    const result = await this.categoryRepository.findMany();
+
+    await this.cache.set(
+      cacheKey,
+      {
+        categories: result.map((c: Category) => ({
+          id: c.id.toString(),
+          name: c.name,
+          description: c.description,
+          createdAt: c.createdAt,
+          updatedAt: c.updatedAt,
+        })),
+      },
+      30,
+    );
+
+    return success({ categories: result });
   }
 }

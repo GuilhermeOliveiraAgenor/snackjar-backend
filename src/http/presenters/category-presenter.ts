@@ -1,6 +1,5 @@
 import { Category } from "../../core/entities/category";
 import { BasePresenter } from "./base/base-presenter";
-import { PaginationMeta } from "./base/pagination-meta";
 
 export class CategoryPresenter {
   private static map(raw: Category) {
@@ -13,11 +12,11 @@ export class CategoryPresenter {
     };
   }
 
-  static toHTTP(category: Category) {
-    return BasePresenter.toResponse(this.map(category));
-  }
+  static toHTTP(category: Category | Category[]) {
+    if (Array.isArray(category)) {
+      return BasePresenter.toResponse(category.map((item) => this.map(item)));
+    }
 
-  static toHTTPPaginated(categories: Category[], meta: PaginationMeta) {
-    return BasePresenter.toPaginatedResponse(categories.map(CategoryPresenter.map), meta);
+    return BasePresenter.toResponse(this.map(category));
   }
 }

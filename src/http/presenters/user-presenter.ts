@@ -7,6 +7,8 @@ export class UserPresenter {
       id: raw.id.toString(),
       name: raw.name,
       email: raw.email,
+      provider: raw.provider,
+      avatarUrl: raw.avatarUrl,
       createdAt: raw.createdAt,
       updatedAt: raw.createdAt,
     };

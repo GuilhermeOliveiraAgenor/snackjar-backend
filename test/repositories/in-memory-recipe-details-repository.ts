@@ -12,9 +12,11 @@ export class InMemoryRecipeDetailsRepository implements RecipeDetailsRepository 
     private recipeIngredientRepository: RecipeIngredientRepository,
     private recipeStepRepository: RecipeStepRepository,
   ) {}
-  async getDetailsByRecipeId(
-    recipeId: string,
-  ): Promise<{ recipe: Recipe; steps: RecipeStep[]; ingredients: RecipeIngredient[] } | null> {
+  async getDetailsByRecipeId(recipeId: string): Promise<{
+    recipe: Recipe;
+    recipeSteps: RecipeStep[];
+    recipeIngredients: RecipeIngredient[];
+  } | null> {
     const recipe = await this.recipeRepository.findById(recipeId);
     if (!recipe) return null;
 
