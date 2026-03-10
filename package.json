@@ -8,6 +8,7 @@
     "build": "tsup src --out-dir build",
     "test": "vitest run",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
+    "seed": "tsx prisma/seed.ts",
     "lint": "eslint . --ext .ts,.tsx --fix"
   },
   "keywords": [],
