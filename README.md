@@ -24,3 +24,12 @@ O projeto também conta com **testes automatizados unitários e end-to-end utili
 
 📄 **Documentação completa de requisitos (RF / RNF):**  
 [Ver documento](https://drive.google.com/file/d/1PTGbxawSF4LGZ_OWl6w4UfVvGpPE2xJk/view?usp=sharing)
+
+## 🗄️ Diagrama Entidade Relacionamento (DER)
+
+O diagrama abaixo representa a estrutura do banco de dados da aplicação
+e os relacionamentos entre as principais entidades do sistema.
+
+<p align="center">
+  <img src="./der.png" alt="Database ER Diagram" width="800">
+</p>
