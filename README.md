@@ -36,6 +36,10 @@ e os relacionamentos entre as principais entidades do sistema.
 
 ## 🏗️ Arquitetura
 
+A aplicação segue os princípios da **Clean Architecture**, organizando o código em camadas com responsabilidades definidas. Essa abordagem facilita a manutenção, evolução e escalabilidade do sistema ao separar claramente as regras de negócio da lógica de infraestrutura.
+
+Dessa forma, o domínio da aplicação permanece independente de frameworks e outras tecnologias externas, permitindo que cada camada tenha um papel específico dentro da arquitetura.
+
 ### Entity (Domain)
 - Representa a entidade de negócio com as propriedades dentro do domínio.
 
