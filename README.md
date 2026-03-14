@@ -33,3 +33,122 @@ e os relacionamentos entre as principais entidades do sistema.
 <p align="center">
   <img src="./der.png" alt="Database ER Diagram" width="800">
 </p>
+
+## 🏗️ Arquitetura
+
+A aplicação segue os princípios da **Clean Architecture**, organizando o código em camadas com responsabilidades definidas. Essa abordagem facilita a manutenção, evolução e escalabilidade do sistema ao separar claramente as regras de negócio da lógica de infraestrutura.
+
+Dessa forma, o domínio da aplicação permanece independente de frameworks e outras tecnologias externas, permitindo que cada camada tenha um papel específico dentro da arquitetura.
+
+### Entity (Domain)
+- Representa a entidade de negócio com as propriedades dentro do domínio.
+
+```ts
+export interface RecipeProps {
+  title: string
+  description: string
+  preparationTime: number
+  status: RecipeStatus
+  /*...*/
+}
+
+export class Recipe {
+  constructor(
+    private readonly _id: UniqueEntityID,
+    private props: RecipeProps
+  ) {}
+}
+```
+
+### Use Case (Application Layer) 
+- Contém a lógica de negócios da aplicação e administra as interações entre as entidades do domínio e os repositórios.
+
+```ts
+export class CreateRecipeUseCase {
+  constructor(
+    private recipeRepository: RecipeRepository,
+    private categoryRepository: CategoryRepository
+  ) {}
+
+  async execute(data: CreateRecipeUseCaseRequest) {
+
+    const recipe = Recipe.create({
+      title: data.title,
+      description: data.description,
+      preparationTime: data.preparationTime,
+      status: RecipeStatus.ACTIVE,
+      /*...*/
+    })
+
+    await this.recipeRepository.create(recipe)
+
+    return success({ recipe })
+  }
+}
+```
+
+### Repository Interface (Dependency Inversion)
+- Define o contrato para persistência de dados permitindo que a aplicação permaneça independente das implementações de infraestrutura.
+
+```ts
+export interface RecipeRepository {
+  create(recipe: Recipe): Promise<void>
+  findById(id: string): Promise<Recipe | null>
+  findManyByUserId(userId: string, page: number, perPage: number): Promise<{ recipes: Recipe[]; totalCount: number }>
+}
+```
+
+## ▶️ Run
+
+### 1️⃣ Clone o repositório
+```
+git clone https://github.com/GuilhermeOliveiraAgenor/snackjar-backend.git
+cd snackjar-backend
+```
+
+### 2️⃣ Instalar dependências
+
+```
+npm install
+```
+
+### 3️⃣ Configurar variáveis de ambiente
+Utilize o `.env.example` como base para configurar o arquivo `.env`.
+```
+cp .env.example .env
+```
+
+### 4️⃣ Subir serviços no Docker (PostgreSQL e Redis)
+```
+docker compose up -d
+```
+
+### 5️⃣ Executar migrations do banco de dados
+```
+npx prisma generate
+npx prisma migrate dev
+```
+
+### 6️⃣ Executar seed
+```
+npm run seed
+```
+
+### 7️⃣ Iniciar o servidor
+```
+npm run dev
+```
+
+## 🧪 Testes
+
+### Executar testes unitários
+
+```
+npm run test
+```
+
+### Executar testes E2E
+
+```
+npm run test:e2e
+```
